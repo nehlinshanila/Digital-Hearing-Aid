@@ -1,6 +1,6 @@
 import PySimpleGUI as sg #for the UI design
 import pyaudio #for the input of the audio
-import numpy as np #for numaric and mathematical calculationssuch as fourier
+import numpy as np #for numeric and mathematical calculations such as fast fourier transformation(fft)
 
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
