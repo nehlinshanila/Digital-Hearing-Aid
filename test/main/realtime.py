@@ -4,22 +4,24 @@ import numpy as np #for numaric and mathematical calculationssuch as fourier
 
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
-# VARS contants that will control the window's UI and the UI of the Audio stream
-_VARS = {'window': False,
-         'stream': False,
+# *VARS contants that will control the window's UI and the UI of the Audio stream
+_VARS = {'window': False, #this will hold the UI window as a variable/constant
+         'stream': False, #this will hold the audio stream as a variable/constant
         #  'canvas': False
          }
 
 # pysimpleGUI initiation
 # here we initiate the overall UI and then control afterwards
-AppFont = 'Any 16'
+
+AppFont = 'Any 16' #this is the font variable
+
 # the theme of the UI
 sg.theme('DarkTeal2')
 
-# this here customizes the layout
+# *this here customizes the layout
 layout = [[sg.ProgressBar(4000, orientation='h',
                           size=(20, 20), key='-PROG-')],
-          [sg.Text('Frequency: ', font=AppFont),
+          [sg.Text('Frequency:', font=AppFont),
            sg.Text('0 Hz', key='Frequency',font=AppFont)],
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
@@ -36,7 +38,7 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 # canvas = _VARS['window']['-CANVAS-'].TKCanvas
 # line = canvas.create_line((0, 150, 400, 150), fill='red', width=2)
 
-# initiating constants for the audio stream data
+# *initiating constants for the audio stream data
 CHUNK = 1024  # Samples: 1024,  512, 256, 128
 RATE = 22000  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
@@ -51,7 +53,8 @@ pAud = pyaudio.PyAudio()
 
 # FUNCTIONS:
 
-# this controls the stop button of the UI
+# *this controls the stop button of the UI
+#  !All the UI are reset here
 def stop():
     if _VARS['stream']:
         _VARS['stream'].stop_stream()
@@ -61,35 +64,38 @@ def stop():
         _VARS['window']['Listen'].Update(disabled=False)
         _VARS['window']['Frequency'].Update('0 Hz')
 
-# returns the data extracted from the audio input
+# !returns the data extracted from the audio input
 def callback(in_data, frame_count, time_info, status):
-    # this is the input data or audio stream
+    
+    # *this is the input data or audio stream
     # print(in_data)
-    data = np.frombuffer(in_data, dtype=np.int16)
+    data = np.frombuffer(in_data, dtype=np.int16) # Convert the input data to a NumPy array
     # print(data)
-    data2 = np.frombuffer(data, dtype=np.float32)
+    data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
-    fft_data = np.fft.fft(data)
+    fft_data = np.fft.fft(data) # Calculate the FFT of the data
     # print(fft_data)
-    psd = np.abs(fft_data) ** 2
+    psd = np.abs(fft_data) ** 2 # Calculate the power spectral density (PSD) of the data
     # print(psd)
-    freq_binary = np.fft.fftfreq(len(psd)) * RATE
-    # print(freq_binary)
+    freq_bins = np.fft.fftfreq(len(psd)) * RATE # Calculate the frequency bins for the PSD
+    # print(freq_bins)
+    
+    # *Find the peak frequency in the PSD
     peak_idx = np.argmax(psd)
     # print(peak_idx)
-    peak_freq = freq_binary[peak_idx]
+    peak_freq = freq_bins[peak_idx]
     # print(peak_freq)
     
-    # this is the max data of the amplitude
+    # *this is the max data of the amplitude got from the numpy array
     # print(np.amax(data))
-    _VARS['window']['-PROG-'].update(np.amax(data))
+    _VARS['window']['-PROG-'].update(np.amax(data)) #*updates the progress bar according to the sound density
     
     # data = in_data.read(CHUNK)
     # elapsed_time = len(in_data) / (RATE * CHANNELS * 2)
     # frecuency = (2 * np.pi * elapsed_time * RATE) / CHUNK
     
-    # print(peak_freq)
-    _VARS['window']['Frequency'].update(f'{peak_freq} Hz')
+    # *this updates the frequency in real time
+    _VARS['window']['Frequency'].update(f'{peak_freq} Hz') 
     
     
     # returning the data
@@ -111,11 +117,12 @@ def listen():
 
     _VARS['stream'].start_stream()
     
-# This is where the main loop happens
-# it's an infinite loop and it only stops when stop button is pressed
-# or the window is closed
+# *This is where the main loop happens
+# *it's an infinite loop and it only stops when stop button is pressed
+# *or the window is closed
 while True:
     event, values = _VARS['window'].read(timeout=200)
+    
     if event == sg.WIN_CLOSED or event == 'Exit':
         stop()    
         pAud.terminate()        
