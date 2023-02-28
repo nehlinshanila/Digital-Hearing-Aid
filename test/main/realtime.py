@@ -18,11 +18,20 @@ AppFont = 'Any 16' #this is the font variable
 # the theme of the UI
 sg.theme('DarkTeal2')
 
+
+unit_amp0 = '0 dB'
+unit_freq0 = '0 Hz'
+unit_psd0 = '0 W/Hz'
+
 # *this here customizes the layout
 layout = [[sg.ProgressBar(4000, orientation='h',
                           size=(20, 20), key='-PROG-')],
           [sg.Text('Frequency:', font=AppFont),
-           sg.Text('0 Hz', key='Frequency',font=AppFont)],
+           sg.Text(unit_freq0, key='Frequency',font=AppFont)],
+          [sg.Text('Amplitude:', font=AppFont),
+           sg.Text(unit_amp0, key='-Amplitude-', font=AppFont)],
+          [sg.Text('PSD', font=AppFont),
+           sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
            sg.Button('Exit', key='Exit', font=AppFont)],
@@ -46,6 +55,7 @@ CHANNELS = 1
 freq_bins = None
 psd = None
 
+
 # PyAudio initiation
 pAud = pyaudio.PyAudio()
 
@@ -62,7 +72,9 @@ def stop():
         _VARS['window']['-PROG-'].update(0)
         _VARS['window']['Stop'].Update(disabled=True)
         _VARS['window']['Listen'].Update(disabled=False)
-        _VARS['window']['Frequency'].Update('0 Hz')
+        _VARS['window']['Frequency'].Update(unit_freq0)
+        _VARS['window']['-Amplitude-'].Update(unit_amp0)
+        _VARS['window']['-PSD-'].Update(unit_psd0)
 
 # !returns the data extracted from the audio input
 def callback(in_data, frame_count, time_info, status):
@@ -71,7 +83,13 @@ def callback(in_data, frame_count, time_info, status):
     # print(in_data)
     data = np.frombuffer(in_data, dtype=np.int16) # Convert the input data to a NumPy array
     # print(data)
-    data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
+    # *the root mean square of the audio signal
+    
+    # amp_data = np.frombuffer(amp_data, dtype=np.int16)
+    
+    amplitude = np.sqrt(np.mean(np.square(data)))
+    
+    # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
     fft_data = np.fft.fft(data) # Calculate the FFT of the data
     # print(fft_data)
@@ -94,9 +112,15 @@ def callback(in_data, frame_count, time_info, status):
     # elapsed_time = len(in_data) / (RATE * CHANNELS * 2)
     # frecuency = (2 * np.pi * elapsed_time * RATE) / CHUNK
     
+    
     # *this updates the frequency in real time
     _VARS['window']['Frequency'].update(f'{peak_freq} Hz') 
     
+    # * this is where the amplitude updates regularly
+    _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
+    
+    # * this is where the psd updates periodically
+    _VARS['window']['-PSD-'].update(f'{peak_idx} W/Hz')
     
     # returning the data
     return (in_data, pyaudio.paContinue)
