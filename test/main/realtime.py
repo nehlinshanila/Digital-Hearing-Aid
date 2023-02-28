@@ -43,7 +43,7 @@ CHUNK = 1024  # Samples: 1024,  512, 256, 128
 RATE = 22000  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
-freq_binary = None
+freq_bins = None
 psd = None
 
 # PyAudio initiation
@@ -133,7 +133,7 @@ while True:
         stop()
         
     # canvas.delete(line)
-    # line = canvas.create_line([(freq_binary[i], 300 -10 * np.log10(psd[i]))
+    # line = canvas.create_line([(freq_bins[i], 300 -10 * np.log10(psd[i]))
     #                            for i in range(len(psd) //2)], 
     #                           fill='red', width=2)
 
