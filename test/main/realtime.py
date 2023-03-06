@@ -1,6 +1,11 @@
 import PySimpleGUI as sg #for the UI design
 import pyaudio #for the input of the audio
 import numpy as np #for numaric and mathematical calculationssuch as fourier
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
+import matplotlib.animation as animation
+import math
+from scipy.signal import lfilter, wiener
 
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
@@ -30,15 +35,11 @@ layout = [[sg.ProgressBar(4000, orientation='h',
            sg.Text(unit_freq0, key='Frequency',font=AppFont)],
           [sg.Text('Amplitude:', font=AppFont),
            sg.Text(unit_amp0, key='-Amplitude-', font=AppFont)],
-        #   [sg.Text('PSD', font=AppFont),
+        #   [sg.Text('PSD:', font=AppFont),
         #    sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
-           sg.Button('Exit', key='Exit', font=AppFont)],
-        #   [sg.Text('Frequency:', font=AppFont),
-        #    sg.Canvas(key='-CANVAS-'),
-        #    sg.Text('Peak Frequency', font=AppFont, key='-FREQ-')]
-          ]
+           sg.Button('Exit', key='Exit', font=AppFont)]]
 
 # finalizing the window UI
 _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
@@ -54,6 +55,13 @@ INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
 freq_bins = None
 psd = None
+
+# for the PSD data
+FORMAT = pyaudio.paInt16
+WINDOW = mlab.window_hanning # Window function
+NFFT = CHUNK # Number of FFT points
+DETREND = mlab.detrend_none # Detrend function
+FS = RATE / NFFT # Frequency resolution (Hz)
 
 
 # PyAudio initiation
@@ -79,15 +87,19 @@ def stop():
 # !returns the data extracted from the audio input
 def callback(in_data, frame_count, time_info, status):
     
+    
     # *this is the input data or audio stream
     # print(in_data)
     data = np.frombuffer(in_data, dtype=np.int16) # Convert the input data to a NumPy array
     # print(data)
+    
+    # filtered data
+    data = wiener(data)
+    
     # *the root mean square of the audio signal
-    
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
-    
     amplitude = np.sqrt(np.mean(np.square(data)))
+    amplitude = 20 * math.log10(amplitude)
     
     # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
@@ -95,6 +107,8 @@ def callback(in_data, frame_count, time_info, status):
     # print(fft_data)
     psd = np.abs(fft_data) ** 2 # Calculate the power spectral density (PSD) of the data
     # print(psd)
+    psd = 10 * np.log10(psd) # Convert to dB
+    psd = np.maximum(psd, -100)
     freq_bins = np.fft.fftfreq(len(psd)) * RATE # Calculate the frequency bins for the PSD
     # print(freq_bins)
     
@@ -114,13 +128,15 @@ def callback(in_data, frame_count, time_info, status):
     
     
     # *this updates the frequency in real time
-    _VARS['window']['Frequency'].update(f'{peak_freq} Hz') 
+    _VARS['window']['Frequency'].update(f'{peak_freq:.2f} Hz') 
     
     # * this is where the amplitude updates regularly
     _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
     
+    
+    
     # * this is where the psd updates periodically
-    # _VARS['window']['-PSD-'].update(f'{peak_idx} W/Hz')
+    # _VARS['window']['-PSD-'].update(f'{psd} W/Hz')
     
     # returning the data
     return (in_data, pyaudio.paContinue)
@@ -140,6 +156,24 @@ def listen():
                                 stream_callback=callback)
 
     _VARS['stream'].start_stream()
+    
+# PSD starts
+fig, ax = plt.subplots()
+ax.set_xlim(0, FS/2)
+ax.set_ylim(-100, 50)
+line, = ax.plot([], [])
+
+def updatePSD(data):
+    psd , freqs = mlab.psd(data, Fs=RATE, NFFT=NFFT, window=WINDOW, detrend=DETREND)
+    psd = 10*np.log10(psd)
+    psd = np.maximum(psd, -100)
+    
+    line.set_data(freqs, psd)
+    
+    return line
+
+# PSD ends
+    
     
 # *This is where the main loop happens
 # *it's an infinite loop and it only stops when stop button is pressed
