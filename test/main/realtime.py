@@ -30,8 +30,8 @@ layout = [[sg.ProgressBar(4000, orientation='h',
            sg.Text(unit_freq0, key='Frequency',font=AppFont)],
           [sg.Text('Amplitude:', font=AppFont),
            sg.Text(unit_amp0, key='-Amplitude-', font=AppFont)],
-          [sg.Text('PSD', font=AppFont),
-           sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
+        #   [sg.Text('PSD', font=AppFont),
+        #    sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
            sg.Button('Exit', key='Exit', font=AppFont)],
@@ -49,7 +49,7 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 
 # *initiating constants for the audio stream data
 CHUNK = 1024  # Samples: 1024,  512, 256, 128
-RATE = 22000  # Equivalent to Human Hearing at 40 kHz
+RATE = 44100  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
 freq_bins = None
@@ -74,7 +74,7 @@ def stop():
         _VARS['window']['Listen'].Update(disabled=False)
         _VARS['window']['Frequency'].Update(unit_freq0)
         _VARS['window']['-Amplitude-'].Update(unit_amp0)
-        _VARS['window']['-PSD-'].Update(unit_psd0)
+        # _VARS['window']['-PSD-'].Update(unit_psd0)
 
 # !returns the data extracted from the audio input
 def callback(in_data, frame_count, time_info, status):
@@ -120,7 +120,7 @@ def callback(in_data, frame_count, time_info, status):
     _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
     
     # * this is where the psd updates periodically
-    _VARS['window']['-PSD-'].update(f'{peak_idx} W/Hz')
+    # _VARS['window']['-PSD-'].update(f'{peak_idx} W/Hz')
     
     # returning the data
     return (in_data, pyaudio.paContinue)
