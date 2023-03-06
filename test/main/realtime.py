@@ -93,7 +93,11 @@ def callback(in_data, frame_count, time_info, status):
     data = np.frombuffer(in_data, dtype=np.int16) # Convert the input data to a NumPy array
     # print(data)
     
-    # filtered data
+    # *filtered data
+        # Wiener Filter: This filter can be used to estimate 
+        # the original clean signal from the noisy signal by 
+        # estimating the power spectral densities of the 
+        # original signal and noise.
     data = wiener(data)
     
     # *the root mean square of the audio signal
