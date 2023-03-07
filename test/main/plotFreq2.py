@@ -14,7 +14,9 @@ stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate,
 fig, ax = plt.subplots()
 freq_axis = np.fft.fftfreq(chunk_size, d=1/sample_rate)
 line, = ax.plot(freq_axis[:chunk_size//2], np.zeros(chunk_size//2))
-ax.set_ylim(0, 50000)
+ax.set_ylim(0, 100000)
+ax.set_ylabel('Frequency (Hz)')
+ax.set_xlabel('Magnitude')
 
 # Continuously plot the frequency spectrum
 while True:
