@@ -39,7 +39,8 @@ layout = [[sg.ProgressBar(4000, orientation='h',
         #    sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
-           sg.Button('Exit', key='Exit', font=AppFont)]]
+           sg.Button('Exit', key='Exit', font=AppFont)],
+          [sg.Button('Frequency-Plot', key='-FreqPlot-', font=AppFont)]]
 
 # finalizing the window UI
 _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
@@ -83,6 +84,13 @@ def stop():
         _VARS['window']['Frequency'].Update(unit_freq0)
         _VARS['window']['-Amplitude-'].Update(unit_amp0)
         # _VARS['window']['-PSD-'].Update(unit_psd0)
+
+
+fig, ax = plt.subplots()
+freq_axis = np.fft.fftfreq(CHUNK, d=1/RATE)
+line, = ax.plot(freq_axis[:CHUNK//2], np.zeros(CHUNK//2))
+ax.set_ylim(0, 200)
+
 
 # !returns the data extracted from the audio input
 def callback(in_data, frame_count, time_info, status):
@@ -142,6 +150,12 @@ def callback(in_data, frame_count, time_info, status):
     # * this is where the psd updates periodically
     # _VARS['window']['-PSD-'].update(f'{psd} W/Hz')
     
+    plotting_fft_data = np.abs(np.fft.fft(data))
+    
+    line.set_ydata(plotting_fft_data[:CHUNK//2])
+        
+    
+    
     # returning the data
     return (in_data, pyaudio.paContinue)
 
@@ -161,23 +175,6 @@ def listen():
 
     _VARS['stream'].start_stream()
     
-# PSD starts
-fig, ax = plt.subplots()
-ax.set_xlim(0, FS/2)
-ax.set_ylim(-100, 50)
-line, = ax.plot([], [])
-
-def updatePSD(data):
-    psd , freqs = mlab.psd(data, Fs=RATE, NFFT=NFFT, window=WINDOW, detrend=DETREND)
-    psd = 10*np.log10(psd)
-    psd = np.maximum(psd, -100)
-    
-    line.set_data(freqs, psd)
-    
-    return line
-
-# PSD ends
-    
     
 # *This is where the main loop happens
 # *it's an infinite loop and it only stops when stop button is pressed
@@ -193,6 +190,18 @@ while True:
         listen()
     if event == 'Stop':
         stop()
+    if event == '-FreqPlot-':
+        state = _VARS['window'].Element('Listen').Disabled
+        while state == True:
+            plt.draw()
+            plt.pause(0.001)
+
+                
+        #     print("enabled")
+        # else:
+        #     print("disabled")
+        
+        
         
     # canvas.delete(line)
     # line = canvas.create_line([(freq_bins[i], 300 -10 * np.log10(psd[i]))
