@@ -38,7 +38,7 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 
 # initiating constants for the audio stream data
 CHUNK = 1024  # Samples: 1024,  512, 256, 128
-RATE = 22000  # Equivalent to Human Hearing at 40 kHz
+RATE = 44100  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
 freq_binary = None
