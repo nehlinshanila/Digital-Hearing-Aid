@@ -27,7 +27,9 @@ stream = p.open(format=FORMAT,
 # Initialize figure
 fig, ax = plt.subplots()
 ax.set_xlim(0, FS/2)
-ax.set_ylim(-100, 50)
+ax.set_ylim(-100, 100)
+ax.set_xlabel('Frequency (Hz)')
+ax.set_ylabel('Power (dB/Hz)')
 line, = ax.plot([], [])
 
 # Update function

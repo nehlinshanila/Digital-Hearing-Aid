@@ -98,7 +98,7 @@ def callback(in_data, frame_count, time_info, status):
         # the original clean signal from the noisy signal by 
         # estimating the power spectral densities of the 
         # original signal and noise.
-    data = wiener(data)
+    # data = wiener(data)
     
     # *the root mean square of the audio signal
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
@@ -112,7 +112,8 @@ def callback(in_data, frame_count, time_info, status):
     psd = np.abs(fft_data) ** 2 # Calculate the power spectral density (PSD) of the data
     # print(psd)
     psd = 10 * np.log10(psd) # Convert to dB
-    psd = np.maximum(psd, -100)
+    psd = np.maximum(psd, -100) #limiting the power spectral density
+
     freq_bins = np.fft.fftfreq(len(psd)) * RATE # Calculate the frequency bins for the PSD
     # print(freq_bins)
     
