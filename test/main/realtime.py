@@ -6,6 +6,7 @@ import matplotlib.mlab as mlab
 import matplotlib.animation as animation
 import math
 from scipy.signal import lfilter, wiener
+import wave as wv
 
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
@@ -63,6 +64,10 @@ NFFT = CHUNK # Number of FFT points
 DETREND = mlab.detrend_none # Detrend function
 FS = RATE / NFFT # Frequency resolution (Hz)
 
+TIME_OF_RECORD = 5
+WAVE_OUTPUT_FILENAME = 'testOutput.wav'
+
+frames = []
 
 # PyAudio initiation
 pAud = pyaudio.PyAudio()
@@ -84,10 +89,19 @@ def stop():
         _VARS['window']['-Amplitude-'].Update(unit_amp0)
         # _VARS['window']['-PSD-'].Update(unit_psd0)
 
+        #!this here works for the saving of the wave file
+        # wf = wv.open('WAVE_OUTPUT_FILENAME', 'wb')
+        # wf.setnchannels(CHANNELS)
+        # wf.setsampwidth(pAud.get_sample_size(FORMAT))
+        # wf.setframerate(RATE)
+        # wf.writeframes(b''.join(frames))
+        # wf.close()
+
 # !returns the data extracted from the audio input
 def callback(in_data, frame_count, time_info, status):
-    
-    
+    #!appending input sound data to the audio
+    # frames.append(in_data)
+
     # *this is the input data or audio stream
     # print(in_data)
     data = np.frombuffer(in_data, dtype=np.int16) # Convert the input data to a NumPy array
@@ -153,7 +167,7 @@ def listen():
     _VARS['window']['Listen'].Update(disabled=True)
     # this part enables the audio input
     # here we can talk using the microphone
-    _VARS['stream'] = pAud.open(format=pyaudio.paInt16,
+    _VARS['stream'] = pAud.open(format=pyaudio.paFloat32,
                                 channels=CHANNELS,
                                 rate=RATE,
                                 input=True,
@@ -161,6 +175,10 @@ def listen():
                                 stream_callback=callback)
 
     _VARS['stream'].start_stream()
+
+    #!reading the whole audio stream data and saving it using loop
+    # for i in range(0, int(RATE / CHUNK * TIME_OF_RECORD)):
+    #     data = _VARS['stream'].read(CHUNK)
     
 # PSD starts
 fig, ax = plt.subplots()
