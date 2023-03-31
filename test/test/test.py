@@ -1,11 +1,7 @@
-import PySimpleGUI as sg #for the UI design
-import pyaudio #for the input of the audio
-import numpy as np #for numaric and mathematical calculationssuch as fourier
-import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
-import matplotlib.animation as animation
-import math
-from scipy.signal import lfilter, wiener
+import pyaudio
+import numpy as np
+import scipy.signal as signal
+import time
 
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
@@ -54,37 +50,41 @@ CHUNK = 128  # Samples: 1024,  512, 256, 128
 RATE = 44100  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
-freq_bins = None
-psd = None
+CHUNK_SIZE = 1024
+BUFFER_SIZE = 10  # Number of chunks to buffer
 
-# for the PSD data
-FORMAT = pyaudio.paInt16
-WINDOW = mlab.window_hanning # Window function
-NFFT = CHUNK # Number of FFT points
-DETREND = mlab.detrend_none # Detrend function
-FS = RATE / NFFT # Frequency resolution (Hz)
+# Create a low-pass filter
+fc = 4000  # Cutoff frequency
+b, a = signal.butter(4, fc / (RATE / 2), 'low')
 
+# Define callback function to process audio stream
+def audio_callback(in_data, frame_count, time_info, status):
+    # Convert input audio to numpy array
+    audio_data = np.frombuffer(in_data, dtype=np.int16)
 
-# PyAudio initiation
-pAud = pyaudio.PyAudio()
+    # Apply Wiener filter
+    filtered_data = signal.wiener(audio_data)
 
+    # Apply low-pass filter
+    filtered_data = signal.filtfilt(b, a, filtered_data)
 
+    # Convert filtered audio back to bytes-like object
+    out_data = filtered_data.astype(np.int16).tobytes()
 
-# FUNCTIONS:
+    return (out_data, pyaudio.paContinue)
 
-# *this controls the stop button of the UI
-#  !All the UI are reset here
-def stop():
-    if _VARS['stream']:
-        _VARS['stream'].stop_stream()
-        _VARS['stream'].close()
-        _VARS['window']['-PROG-'].update(0)
-        _VARS['window']['Stop'].Update(disabled=True)
-        _VARS['window']['Listen'].Update(disabled=False)
-        _VARS['window']['Frequency'].Update(unit_freq0)
-        _VARS['window']['-Amplitude-'].Update(unit_amp0)
-        # _VARS['window']['-PSD-'].Update(unit_psd0)
+# Open audio stream
+p = pyaudio.PyAudio()
+stream = p.open(format=pyaudio.paInt16,
+                channels=CHANNELS,
+                rate=RATE,
+                input=True,
+                output=True,
+                frames_per_buffer=CHUNK_SIZE,
+                stream_callback=audio_callback)
 
+# Start audio stream
+stream.start_stream()
 
 fig, ax = plt.subplots()
 freq_axis = np.fft.fftfreq(CHUNK, d=1/RATE)
@@ -189,27 +189,8 @@ while True:
         stop()    
         pAud.terminate()        
         break
-    if event == 'Listen':
-        listen()
-    if event == 'Stop':
-        stop()
-    if event == '-FreqPlot-':
-        state = _VARS['window'].Element('Listen').Disabled
-        while state == True:
-            plt.draw()
-            plt.pause(0.001)
 
-                
-        #     print("enabled")
-        # else:
-        #     print("disabled")
-        
-        
-        
-    # canvas.delete(line)
-    # line = canvas.create_line([(freq_bins[i], 300 -10 * np.log10(psd[i]))
-    #                            for i in range(len(psd) //2)], 
-    #                           fill='red', width=2)
-
-# clsoe the window UI anyway after the loop
-_VARS['window'].close()
+# Stop audio stream
+stream.stop_stream()
+stream.close()
+p.terminate()
