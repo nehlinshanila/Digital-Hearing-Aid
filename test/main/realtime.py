@@ -98,12 +98,12 @@ def callback(in_data, frame_count, time_info, status):
         # the original clean signal from the noisy signal by 
         # estimating the power spectral densities of the 
         # original signal and noise.
-    data = wiener(data)
+    # data = wiener(data)
     
     # *the root mean square of the audio signal
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
     amplitude = np.sqrt(np.mean(np.square(data)))
-    amplitude = 20 * math.log10(amplitude)
+    # amplitude = 20 * math.log10(amplitude)
     
     # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
@@ -132,10 +132,12 @@ def callback(in_data, frame_count, time_info, status):
     
     
     # *this updates the frequency in real time
-    _VARS['window']['Frequency'].update(f'{peak_freq:.2f} Hz') 
+    if peak_freq > 200.00:
+        _VARS['window']['Frequency'].update(f'{peak_freq:.2f} Hz') 
     
     # * this is where the amplitude updates regularly
-    _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
+    if amplitude > 10.00:
+        _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
     
     
     
@@ -156,6 +158,7 @@ def listen():
                                 channels=CHANNELS,
                                 rate=RATE,
                                 input=True,
+                                output=False,
                                 frames_per_buffer=CHUNK,
                                 stream_callback=callback)
 

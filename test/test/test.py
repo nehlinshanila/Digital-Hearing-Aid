@@ -50,7 +50,7 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 # line = canvas.create_line((0, 150, 400, 150), fill='red', width=2)
 
 # *initiating constants for the audio stream data
-CHUNK = 1024  # Samples: 1024,  512, 256, 128
+CHUNK = 128  # Samples: 1024,  512, 256, 128
 RATE = 44100  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
@@ -106,13 +106,15 @@ def callback(in_data, frame_count, time_info, status):
         # the original clean signal from the noisy signal by 
         # estimating the power spectral densities of the 
         # original signal and noise.
-    data = wiener(data)
+    # data = wiener(data)
     
     # *the root mean square of the audio signal
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
     amplitude = np.sqrt(np.mean(np.square(data)))
-    amplitude = 20 * math.log10(amplitude)
-    
+    # amplitude = 20 * math.log10(amplitude)
+    threshhold = 100
+    if(amplitude > threshhold):
+        print("loud noise")
     # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
     fft_data = np.fft.fft(data) # Calculate the FFT of the data
@@ -157,7 +159,7 @@ def callback(in_data, frame_count, time_info, status):
     
     
     # returning the data
-    return (in_data, pyaudio.paContinue)
+    return (data, pyaudio.paContinue)
 
 
 # this function controls the listen button of the UI
@@ -170,6 +172,7 @@ def listen():
                                 channels=CHANNELS,
                                 rate=RATE,
                                 input=True,
+                                output=True,
                                 frames_per_buffer=CHUNK,
                                 stream_callback=callback)
 
