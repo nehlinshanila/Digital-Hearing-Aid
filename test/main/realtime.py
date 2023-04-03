@@ -50,7 +50,7 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 # line = canvas.create_line((0, 150, 400, 150), fill='red', width=2)
 
 # *initiating constants for the audio stream data
-CHUNK = 1024  # Samples: 1024,  512, 256, 128
+CHUNK = 2048  # Samples: 1024,  512, 256, 128
 RATE = 44100  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
@@ -147,12 +147,30 @@ def callback(in_data, frame_count, time_info, status):
     
     
     # *this updates the frequency in real time
-    if peak_freq > 200.00:
-        _VARS['window']['Frequency'].update(f'{peak_freq:.2f} Hz') 
+    # if peak_freq > 200.00:
+    # _VARS['window']['Frequency'].update(f'{peak_freq:.2f} Hz')
+    
+    freqs = np.fft.fftfreq(len(data), d=1/RATE)
+    fft = np.fft.fft(data)
+    index = np.argmax(np.abs(fft))
+    freq = freqs[index]
+    if freq > 200.00:
+        _VARS['window']['Frequency'].update(f'{freq:.2f} Hz')
+        print(f'{freq:.2f} Hz')
+    else:
+        _VARS['window']['Frequency'].update('0 Hz')
+        print('0 Hz')
+        
+    
     
     # * this is where the amplitude updates regularly
-    if amplitude > 10.00:
-        _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
+    # if amplitude > 10.00:
+    # _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
+    rms = np.sqrt(np.mean(np.square(data)))
+    _VARS['window']['-Amplitude-'].update(f'{rms:.2f} dB')
+    print(f'{rms:.2f} dB')
+    # if the amplitude of the sound is over 20 it will be considered as loud sound
+    
     
     
     
@@ -173,32 +191,12 @@ def listen():
                                 channels=CHANNELS,
                                 rate=RATE,
                                 input=True,
-                                output=False,
+                                output=True,
                                 frames_per_buffer=CHUNK,
                                 stream_callback=callback)
 
     _VARS['stream'].start_stream()
 
-    #!reading the whole audio stream data and saving it using loop
-    # for i in range(0, int(RATE / CHUNK * TIME_OF_RECORD)):
-    #     data = _VARS['stream'].read(CHUNK)
-    
-# PSD starts
-fig, ax = plt.subplots()
-ax.set_xlim(0, FS/2)
-ax.set_ylim(-100, 50)
-line, = ax.plot([], [])
-
-def updatePSD(data):
-    psd , freqs = mlab.psd(data, Fs=RATE, NFFT=NFFT, window=WINDOW, detrend=DETREND)
-    psd = 10*np.log10(psd)
-    psd = np.maximum(psd, -100)
-    
-    line.set_data(freqs, psd)
-    
-    return line
-
-# PSD ends
     
     
 # *This is where the main loop happens
@@ -216,10 +214,6 @@ while True:
     if event == 'Stop':
         stop()
         
-    # canvas.delete(line)
-    # line = canvas.create_line([(freq_bins[i], 300 -10 * np.log10(psd[i]))
-    #                            for i in range(len(psd) //2)], 
-    #                           fill='red', width=2)
 
 # clsoe the window UI anyway after the loop
 _VARS['window'].close()
