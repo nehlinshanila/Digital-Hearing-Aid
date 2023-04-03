@@ -24,8 +24,6 @@ for i in range(0, int(sample_rate / chunk * record_seconds)):
     data = stream.read(chunk)
     
     samples = np.frombuffer(data, dtype=np.int16)
-    # calculate root-mean-square (RMS) amplitude of samples
-    # rms = np.sqrt(np.mean(samples**2))
     rms =np.abs(np.sqrt(np.mean(np.square(samples/32767)))) 
     print(rms)
     if rms < threshold:  
