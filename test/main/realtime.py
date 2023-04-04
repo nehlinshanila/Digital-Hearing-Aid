@@ -1,9 +1,6 @@
 import PySimpleGUI as sg #for the UI design
 import pyaudio #for the input of the audio
 import numpy as np #for numaric and mathematical calculationssuch as fourier
-import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
-import matplotlib.animation as animation
 import math
 from scipy.signal import lfilter, wiener
 import wave as wv
@@ -58,10 +55,10 @@ psd = None
 
 # for the PSD data
 FORMAT = pyaudio.paInt16
-WINDOW = mlab.window_hanning # Window function
-NFFT = CHUNK # Number of FFT points
-DETREND = mlab.detrend_none # Detrend function
-FS = RATE / NFFT # Frequency resolution (Hz)
+# WINDOW = mlab.window_hanning # Window function
+# NFFT = CHUNK # Number of FFT points
+# DETREND = mlab.detrend_none # Detrend function
+# FS = RATE / NFFT # Frequency resolution (Hz)
 
 TIME_OF_RECORD = 5
 WAVE_OUTPUT_FILENAME = 'testOutput.wav'
@@ -114,19 +111,19 @@ def callback(in_data, frame_count, time_info, status):
     
     # *the root mean square of the audio signal
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
-    amplitude = np.sqrt(np.mean(np.square(data)))
+    # amplitude = np.sqrt(np.mean(np.square(data)))
     # amplitude = 20 * math.log10(amplitude)
     
     # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
     # fft_data = np.fft.fft(data) # Calculate the FFT of the data
-    fft_data = fft(data)
-    num_sample = len(data)
-    freq_res = num_sample / float(RATE)
+    # fft_data = fft(data)
+    # num_sample = len(data)
+    # freq_res = num_sample / float(RATE)
     # fft_magnitude = np.abs(fft_data)
     # frequencies = np.linspace(0, RATE/2, num_sample//2 + 1)
     # freq = fft_magnitude[:num_sample//2 + 1] / frequencies
-    frequencies = num_sample / freq_res
+    # frequencies = num_sample / freq_res
     # print(fft_data)
     # psd = np.abs(fft_data) ** 2 # Calculate the power spectral density (PSD) of the data
     # print(psd)
@@ -159,12 +156,12 @@ def callback(in_data, frame_count, time_info, status):
     fft = np.fft.fft(data)
     index = np.argmax(np.abs(fft))
     freq = freqs[index]
-    if freq > 200.00:
-        _VARS['window']['Frequency'].update(f'{freq:.2f} Hz')
-        print(f'{freq:.2f} Hz')
-    else:
-        _VARS['window']['Frequency'].update('0 Hz')
-        print('0 Hz')
+    # if freq > 200.00:
+    _VARS['window']['Frequency'].update(f'{freq:.2f} Hz')
+    # print(f'{freq:.2f} Hz')
+    # else:
+    # _VARS['window']['Frequency'].update('0 Hz')
+    # print('0 Hz')
         
     
     
