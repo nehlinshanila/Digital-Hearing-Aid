@@ -1,55 +1,27 @@
-import pyaudio
 import numpy as np
-import scipy.signal as signal
-import time
+from scipy.fft import fft, fftfreq
+import scipy.io.wavfile as wavfile
 
-# Define parameters
-RATE = 44100
-CHANNELS = 1
-CHUNK_SIZE = 1024
-BUFFER_SIZE = 10  # Number of chunks to buffer
+# Load the audio file
+samplingFrequency, signalData = wavfile.read('sample_audio.wav')
 
-# Create a low-pass filter
-fc = 4000  # Cutoff frequency
-b, a = signal.butter(4, fc / (RATE / 2), 'low')
+# Calculate the length of the audio signal
+lengthSignal = len(signalData)
 
-# Define callback function to process audio stream
-def audio_callback(in_data, frame_count, time_info, status):
-    # Convert input audio to numpy array
-    audio_data = np.frombuffer(in_data, dtype=np.int16)
+# Apply Fourier Transform to the audio signal
+fftSignal = fft(signalData)
 
-    # Apply Wiener filter
-    filtered_data = signal.wiener(audio_data)
+# Get the frequencies of the audio signal
+frequencies = fftfreq(lengthSignal, 1/samplingFrequency)
 
-    # Apply low-pass filter
-    filtered_data = signal.filtfilt(b, a, filtered_data)
+# Plot the frequency spectrum of the audio signal
+import matplotlib.pyplot as plt
+plt.plot(frequencies, np.abs(fftSignal))
+plt.xlabel('Frequency in Hz')
+plt.ylabel('Amplitude')
+plt.show()
 
-    # Convert filtered audio back to bytes-like object
-    out_data = filtered_data.astype(np.int16).tobytes()
-
-    return (out_data, pyaudio.paContinue)
-
-# Open audio stream
-p = pyaudio.PyAudio()
-stream = p.open(format=pyaudio.paInt16,
-                channels=CHANNELS,
-                rate=RATE,
-                input=True,
-                output=True,
-                frames_per_buffer=CHUNK_SIZE,
-                stream_callback=audio_callback)
-
-# Start audio stream
-stream.start_stream()
-
-# Keep stream running for BUFFER_SIZE chunks
-while stream.is_active():
-    try:
-        time.sleep(1)
-    except KeyboardInterrupt:
-        break
-
-# Stop audio stream
-stream.stop_stream()
-stream.close()
-p.terminate()
+# Get the frequency with the maximum amplitude
+index = np.argmax(np.abs(fftSignal))
+frequency = frequencies[index]
+print("Frequency:", frequency)

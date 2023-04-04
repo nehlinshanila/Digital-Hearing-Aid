@@ -8,7 +8,7 @@ chunk_size = 1024
 sample_rate = 44100
 p = pyaudio.PyAudio()
 stream = p.open(format=pyaudio.paInt16, channels=1, rate=sample_rate,
-                input=True, frames_per_buffer=chunk_size)
+                input=True, output=True, frames_per_buffer=chunk_size)
 
 # Initialize the plot
 fig, ax = plt.subplots()
