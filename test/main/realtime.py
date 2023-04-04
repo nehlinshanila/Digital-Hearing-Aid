@@ -49,7 +49,7 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 # line = canvas.create_line((0, 150, 400, 150), fill='red', width=2)
 
 # *initiating constants for the audio stream data
-CHUNK = 1024  # Samples: 1024,  512, 256, 128
+CHUNK = 2048  # Samples: 1024,  512, 256, 128
 RATE = 44100  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
@@ -115,7 +115,7 @@ def callback(in_data, frame_count, time_info, status):
     # *the root mean square of the audio signal
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
     amplitude = np.sqrt(np.mean(np.square(data)))
-    amplitude = 20 * math.log10(amplitude)
+    # amplitude = 20 * math.log10(amplitude)
     
     # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
@@ -152,10 +152,30 @@ def callback(in_data, frame_count, time_info, status):
     
     
     # *this updates the frequency in real time
-    _VARS['window']['Frequency'].update(f'{frequencies:.2f} Hz') 
+    # if peak_freq > 200.00:
+    # _VARS['window']['Frequency'].update(f'{frequencies:.2f} Hz')
+    
+    freqs = np.fft.fftfreq(len(data), d=1/RATE)
+    fft = np.fft.fft(data)
+    index = np.argmax(np.abs(fft))
+    freq = freqs[index]
+    if freq > 200.00:
+        _VARS['window']['Frequency'].update(f'{freq:.2f} Hz')
+        print(f'{freq:.2f} Hz')
+    else:
+        _VARS['window']['Frequency'].update('0 Hz')
+        print('0 Hz')
+        
+    
     
     # * this is where the amplitude updates regularly
-    _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
+    # if amplitude > 10.00:
+    # _VARS['window']['-Amplitude-'].update(f'{amplitude:.2f} dB')
+    rms = np.sqrt(np.mean(np.square(data)))
+    _VARS['window']['-Amplitude-'].update(f'{rms:.2f} dB')
+    print(f'{rms:.2f} dB')
+    # if the amplitude of the sound is over 20 it will be considered as loud sound
+    
     # _VARS['window']['-Amplitude-'].update( '10 dB')
     
     
@@ -177,6 +197,7 @@ def listen():
                                 channels=CHANNELS,
                                 rate=RATE,
                                 input=True,
+                                output=True,
                                 frames_per_buffer=CHUNK,
                                 stream_callback=callback)
 

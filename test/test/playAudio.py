@@ -6,7 +6,7 @@ import scipy.io.wavfile as wavfile
 chunk_size = 1024
 sample_rate = 44100
 
-wav_data = wavfile.read("test.wav")[1]
+wav_data = wavfile.read("input_audio.wav")[1]
 
 # Open the WAV file in read mode
 # with wave.open('test.wav', 'rb') as wav_file:
