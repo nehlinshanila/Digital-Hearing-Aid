@@ -1,12 +1,10 @@
 import PySimpleGUI as sg #for the UI design
 import pyaudio #for the input of the audio
 import numpy as np #for numaric and mathematical calculationssuch as fourier
-import matplotlib.pyplot as plt
-import matplotlib.mlab as mlab
-import matplotlib.animation as animation
 import math
 from scipy.signal import lfilter, wiener
 import wave as wv
+from scipy.fft import fft, fftfreq
 
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
@@ -36,8 +34,6 @@ layout = [[sg.ProgressBar(4000, orientation='h',
            sg.Text(unit_freq0, key='Frequency',font=AppFont)],
           [sg.Text('Amplitude:', font=AppFont),
            sg.Text(unit_amp0, key='-Amplitude-', font=AppFont)],
-        #   [sg.Text('PSD:', font=AppFont),
-        #    sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
            sg.Button('Exit', key='Exit', font=AppFont)]]
@@ -59,10 +55,10 @@ psd = None
 
 # for the PSD data
 FORMAT = pyaudio.paInt16
-WINDOW = mlab.window_hanning # Window function
-NFFT = CHUNK # Number of FFT points
-DETREND = mlab.detrend_none # Detrend function
-FS = RATE / NFFT # Frequency resolution (Hz)
+# WINDOW = mlab.window_hanning # Window function
+# NFFT = CHUNK # Number of FFT points
+# DETREND = mlab.detrend_none # Detrend function
+# FS = RATE / NFFT # Frequency resolution (Hz)
 
 TIME_OF_RECORD = 5
 WAVE_OUTPUT_FILENAME = 'testOutput.wav'
@@ -87,7 +83,6 @@ def stop():
         _VARS['window']['Listen'].Update(disabled=False)
         _VARS['window']['Frequency'].Update(unit_freq0)
         _VARS['window']['-Amplitude-'].Update(unit_amp0)
-        # _VARS['window']['-PSD-'].Update(unit_psd0)
 
         #!this here works for the saving of the wave file
         # wf = wv.open('WAVE_OUTPUT_FILENAME', 'wb')
@@ -116,25 +111,32 @@ def callback(in_data, frame_count, time_info, status):
     
     # *the root mean square of the audio signal
     # amp_data = np.frombuffer(amp_data, dtype=np.int16)
-    amplitude = np.sqrt(np.mean(np.square(data)))
+    # amplitude = np.sqrt(np.mean(np.square(data)))
     # amplitude = 20 * math.log10(amplitude)
     
     # data2 = np.frombuffer(data, dtype=np.float32) # Convert the input data to a NumPy array
     # print(data2)
-    fft_data = np.fft.fft(data) # Calculate the FFT of the data
+    # fft_data = np.fft.fft(data) # Calculate the FFT of the data
+    # fft_data = fft(data)
+    # num_sample = len(data)
+    # freq_res = num_sample / float(RATE)
+    # fft_magnitude = np.abs(fft_data)
+    # frequencies = np.linspace(0, RATE/2, num_sample//2 + 1)
+    # freq = fft_magnitude[:num_sample//2 + 1] / frequencies
+    # frequencies = num_sample / freq_res
     # print(fft_data)
-    psd = np.abs(fft_data) ** 2 # Calculate the power spectral density (PSD) of the data
+    # psd = np.abs(fft_data) ** 2 # Calculate the power spectral density (PSD) of the data
     # print(psd)
-    psd = 10 * np.log10(psd) # Convert to dB
-    psd = np.maximum(psd, -100) #limiting the power spectral density
+    # psd = 10 * np.log10(psd) # Convert to dB
+    # psd = np.maximum(psd, -100) #limiting the power spectral density
 
-    freq_bins = np.fft.fftfreq(len(psd)) * RATE # Calculate the frequency bins for the PSD
+    # freq_bins = np.fft.fftfreq(len(psd)) * RATE # Calculate the frequency bins for the PSD
     # print(freq_bins)
     
     # *Find the peak frequency in the PSD
-    peak_idx = np.argmax(psd)
+    # peak_idx = np.argmax(psd)
     # print(peak_idx)
-    peak_freq = freq_bins[peak_idx]
+    # peak_freq = freq_bins[peak_idx]
     # print(peak_freq)
     
     # *this is the max data of the amplitude got from the numpy array
@@ -148,18 +150,18 @@ def callback(in_data, frame_count, time_info, status):
     
     # *this updates the frequency in real time
     # if peak_freq > 200.00:
-    # _VARS['window']['Frequency'].update(f'{peak_freq:.2f} Hz')
+    # _VARS['window']['Frequency'].update(f'{frequencies:.2f} Hz')
     
     freqs = np.fft.fftfreq(len(data), d=1/RATE)
     fft = np.fft.fft(data)
     index = np.argmax(np.abs(fft))
     freq = freqs[index]
-    if freq > 200.00:
-        _VARS['window']['Frequency'].update(f'{freq:.2f} Hz')
-        print(f'{freq:.2f} Hz')
-    else:
-        _VARS['window']['Frequency'].update('0 Hz')
-        print('0 Hz')
+    # if freq > 200.00:
+    _VARS['window']['Frequency'].update(f'{freq:.2f} Hz')
+    # print(f'{freq:.2f} Hz')
+    # else:
+    # _VARS['window']['Frequency'].update('0 Hz')
+    # print('0 Hz')
         
     
     
@@ -171,6 +173,7 @@ def callback(in_data, frame_count, time_info, status):
     print(f'{rms:.2f} dB')
     # if the amplitude of the sound is over 20 it will be considered as loud sound
     
+    # _VARS['window']['-Amplitude-'].update( '10 dB')
     
     
     
@@ -187,7 +190,7 @@ def listen():
     _VARS['window']['Listen'].Update(disabled=True)
     # this part enables the audio input
     # here we can talk using the microphone
-    _VARS['stream'] = pAud.open(format=pyaudio.paFloat32,
+    _VARS['stream'] = pAud.open(format=pyaudio.paInt16,
                                 channels=CHANNELS,
                                 rate=RATE,
                                 input=True,
@@ -197,6 +200,14 @@ def listen():
 
     _VARS['stream'].start_stream()
 
+    #!reading the whole audio stream data and saving it using loop
+    # for i in range(0, int(RATE / CHUNK * TIME_OF_RECORD)):
+    #     data = _VARS['stream'].read(CHUNK)
+    
+# PSD starts
+
+
+# PSD ends
     
     
 # *This is where the main loop happens
@@ -214,6 +225,5 @@ while True:
     if event == 'Stop':
         stop()
         
-
 # clsoe the window UI anyway after the loop
 _VARS['window'].close()

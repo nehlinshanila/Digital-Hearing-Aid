@@ -1,69 +1,21 @@
-import pyaudio
 import numpy as np
-import scipy.signal as signal
-import time
+from scipy.fft import fft, fftfreq
+import scipy.io.wavfile as wavfile
 
-"""PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
-
-# *VARS contants that will control the window's UI and the UI of the Audio stream
-_VARS = {'window': False, #this will hold the UI window as a variable/constant
-         'stream': False, #this will hold the audio stream as a variable/constant
-        #  'canvas': False
-         }
-
-# pysimpleGUI initiation
-# here we initiate the overall UI and then control afterwards
-
-AppFont = 'Any 16' #this is the font variable
-
-# the theme of the UI
-sg.theme('DarkTeal2')
-
-
-unit_amp0 = '0 dB'
-unit_freq0 = '0 Hz'
-unit_psd0 = '0 W/Hz'
-
-# *this here customizes the layout
-layout = [[sg.ProgressBar(4000, orientation='h',
-                          size=(20, 20), key='-PROG-')],
-          [sg.Text('Frequency:', font=AppFont),
-           sg.Text(unit_freq0, key='Frequency',font=AppFont)],
-          [sg.Text('Amplitude:', font=AppFont),
-           sg.Text(unit_amp0, key='-Amplitude-', font=AppFont)],
-        #   [sg.Text('PSD:', font=AppFont),
-        #    sg.Text(unit_psd0, key='-PSD-', font=AppFont)]
-          [sg.Button('Listen', key='Listen', font=AppFont),
-           sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
-           sg.Button('Exit', key='Exit', font=AppFont)],
-          [sg.Button('Frequency-Plot', key='-FreqPlot-', font=AppFont)]]
-
-# finalizing the window UI
-_VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
-
-
-# canvas = _VARS['window']['-CANVAS-'].TKCanvas
-# line = canvas.create_line((0, 150, 400, 150), fill='red', width=2)
-
-# *initiating constants for the audio stream data
-CHUNK = 128  # Samples: 1024,  512, 256, 128
-RATE = 44100  # Equivalent to Human Hearing at 40 kHz
-INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
+# Define parameters
+RATE = 44100
 CHANNELS = 1
 CHUNK_SIZE = 1024
 BUFFER_SIZE = 10  # Number of chunks to buffer
 
-# Create a low-pass filter
-fc = 4000  # Cutoff frequency
-b, a = signal.butter(4, fc / (RATE / 2), 'low')
+# Calculate the length of the audio signal
+lengthSignal = len(signalData)
 
-# Define callback function to process audio stream
-def audio_callback(in_data, frame_count, time_info, status):
-    # Convert input audio to numpy array
-    audio_data = np.frombuffer(in_data, dtype=np.int16)
+# Apply Fourier Transform to the audio signal
+fftSignal = fft(signalData)
 
-    # Apply Wiener filter
-    filtered_data = signal.wiener(audio_data)
+# Get the frequencies of the audio signal
+frequencies = fftfreq(lengthSignal, 1/samplingFrequency)
 
     # Apply low-pass filter
     filtered_data = signal.filtfilt(b, a, filtered_data)
@@ -190,7 +142,7 @@ while True:
         pAud.terminate()        
         break
 
-# Stop audio stream
-stream.stop_stream()
-stream.close()
-p.terminate()
+# Get the frequency with the maximum amplitude
+index = np.argmax(np.abs(fftSignal))
+frequency = frequencies[index]
+print("Frequency:", frequency)
