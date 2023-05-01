@@ -5,7 +5,7 @@ import math
 from scipy.signal import lfilter, wiener
 import wave as wv
 from scipy.fft import fft, fftfreq
-
+import time
 """PyAudio PySimpleGUI Non Blocking Stream for Microphone"""
 
 # *VARS contants that will control the window's UI and the UI of the Audio stream
@@ -34,6 +34,8 @@ layout = [[sg.ProgressBar(4000, orientation='h',
            sg.Text(unit_freq0, key='Frequency',font=AppFont)],
           [sg.Text('Amplitude:', font=AppFont),
            sg.Text(unit_amp0, key='-Amplitude-', font=AppFont)],
+          [sg.Text('Elapsed Time:', font=AppFont),
+           sg.Text('0 s' , key='-elapsedTime-', font=AppFont)],
           [sg.Button('Listen', key='Listen', font=AppFont),
            sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
            sg.Button('Exit', key='Exit', font=AppFont)]]
@@ -52,6 +54,9 @@ INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
 freq_bins = None
 psd = None
+start = 0.00
+end = 0.00
+elapsed_time = 0.00
 
 # for the PSD data
 FORMAT = pyaudio.paInt16
@@ -75,14 +80,18 @@ pAud = pyaudio.PyAudio()
 # *this controls the stop button of the UI
 #  !All the UI are reset here
 def stop():
+    
     if _VARS['stream']:
         _VARS['stream'].stop_stream()
         _VARS['stream'].close()
         _VARS['window']['-PROG-'].update(0)
         _VARS['window']['Stop'].Update(disabled=True)
         _VARS['window']['Listen'].Update(disabled=False)
-        _VARS['window']['Frequency'].Update(unit_freq0)
-        _VARS['window']['-Amplitude-'].Update(unit_amp0)
+        # _VARS['window']['Frequency'].Update(unit_freq0)
+        # _VARS['window']['-Amplitude-'].Update(unit_amp0)
+        end = time.time()
+        elapsed_time = end - start
+        _VARS['window']['-elapsedTime-'].Update(str(f'{elapsed_time:.2f} seconds'))
 
         #!this here works for the saving of the wave file
         # wf = wv.open('WAVE_OUTPUT_FILENAME', 'wb')
@@ -186,6 +195,7 @@ def callback(in_data, frame_count, time_info, status):
 
 # this function controls the listen button of the UI
 def listen():
+    start = time.time()
     _VARS['window']['Stop'].Update(disabled=False)
     _VARS['window']['Listen'].Update(disabled=True)
     # this part enables the audio input
@@ -221,8 +231,10 @@ while True:
         pAud.terminate()        
         break
     if event == 'Listen':
+        start = time.time()
         listen()
     if event == 'Stop':
+        
         stop()
         
 # clsoe the window UI anyway after the loop
