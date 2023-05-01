@@ -32,6 +32,8 @@ unit_psd0 = '0 W/Hz'
 limiter_gain = 1.0
 limiter_threshold_value = 0.9
 amplification_factor = 8
+cutoff_frequency = 1800
+loud_check_threshold = 0.4
 
 # *this here customizes the layout
 layout = [
@@ -60,6 +62,16 @@ layout = [
              sg.Button('-', key='-deAmpFactor-', font=AppFont),
              sg.Text(amplification_factor, key='-ampFactorValue-', font=AppFont),
              sg.Button('+', key='-AmpFactor-', font=AppFont)],
+            
+            [sg.Text('CutOff Frequency', font=AppFont),
+             sg.Button('-', key='-deCutoff-', font=AppFont),
+             sg.Text(cutoff_frequency, key='-CutOffValue-', font=AppFont),
+             sg.Button('+', key='-Cutoff-', font=AppFont)],
+            
+            [sg.Text('Loudness Check Threshold', font=AppFont),
+             sg.Button('-', key='-deLoudCheck-', font=AppFont),
+             sg.Text(loud_check_threshold, key='-LoudCheckValue-', font=AppFont),
+             sg.Button('+', key='-LoudCheck-', font=AppFont)],
 
             [sg.Button('Listen', key='Listen', font=AppFont),
              sg.Button('Stop', key='Stop', font=AppFont, disabled=True),
@@ -115,8 +127,6 @@ def stop():
         _VARS['window']['-PROG-'].update(0)
         _VARS['window']['Stop'].Update(disabled=True)
         _VARS['window']['Listen'].Update(disabled=False)
-        # _VARS['window']['Frequency'].Update(f'{last_freq:.2f} Hz')
-        # _VARS['window']['-Amplitude-'].Update(f'{last_amp:.2f} dB')
         end = time.time()
         elapsed_time = end - start
         _VARS['window']['-elapsedTime-'].Update(str(f'{elapsed_time:.2f} seconds'))
@@ -144,7 +154,7 @@ def callback(in_data, frame_count, time_info, status):
 
     rms = np.sqrt(np.mean(np.square(data)))
     _VARS['window']['-Amplitude-'].update(f'{rms:.2f} dB')
-    # print(f'{rms:.2f} dB')
+    
     loud_check_threshold = 0.4
     loud_check_value =np.abs(np.sqrt(np.mean(np.square(data/32767))))
 
@@ -152,7 +162,6 @@ def callback(in_data, frame_count, time_info, status):
         amplification_factor = 2
     else:
         amplification_factor = 4
-    
     #? the amplification
     samples = list(struct.unpack(f"{frame_count}h", in_data))
     
@@ -163,11 +172,9 @@ def callback(in_data, frame_count, time_info, status):
     filtered_samples = signal.lfilter(b, a, samples)
 
     # Apply a limiter to prevent clipping
-    # limiter_gain = 0.8  # Adjust this value to control the maximum output volume
     limiter_threshold = limiter_threshold_value * 32767
     for i in range(len(filtered_samples)):
-        # print(f'samples: {samples[i]}')
-        # print(f'limiter threshold: {limiter_threshold}')
+
         
         if filtered_samples[i] > limiter_threshold:
             limiter_gain = 1.0 + ((32767 - filtered_samples[i]) / 32767)  # Adjust this formula as needed
@@ -175,7 +182,7 @@ def callback(in_data, frame_count, time_info, status):
             filtered_samples[i] = math.floor(limiter_threshold + (filtered_samples[i] - limiter_threshold) * limiter_gain)
 
     # Amplify the audio by a factor of amplification_factor
-    # amplified_data = [min(int(sample * amplification_factor), 32767) for sample in filtered_samples]
+
     amplified_data = [max(min(int(sample * amplification_factor), 32767), -32768) for sample in filtered_samples]
 
 

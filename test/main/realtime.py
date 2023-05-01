@@ -1,3 +1,4 @@
+import struct
 import PySimpleGUI as sg #for the UI design
 import pyaudio #for the input of the audio
 import numpy as np #for numaric and mathematical calculationssuch as fourier
@@ -48,8 +49,8 @@ _VARS['window'] = sg.Window('Microphone Level', layout, finalize=True)
 # line = canvas.create_line((0, 150, 400, 150), fill='red', width=2)
 
 # *initiating constants for the audio stream data
-CHUNK = 2048  # Samples: 1024,  512, 256, 128
-RATE = 44100  # Equivalent to Human Hearing at 40 kHz
+CHUNK = 1024  # Samples: 1024,  512, 256, 128
+RATE = 48000  # Equivalent to Human Hearing at 40 kHz
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1
 freq_bins = None
@@ -188,9 +189,10 @@ def callback(in_data, frame_count, time_info, status):
     
     # * this is where the psd updates periodically
     # _VARS['window']['-PSD-'].update(f'{psd} W/Hz')
-    
+    amplified_data = [min(int(sample * 2), 32767) for sample in struct.unpack(f"<{frame_count}h", in_data)]
+
     # returning the data
-    return (in_data, pyaudio.paContinue)
+    return (struct.pack(f"<{frame_count}h", *amplified_data), pyaudio.paContinue)
 
 
 # this function controls the listen button of the UI
@@ -234,8 +236,17 @@ while True:
         start = time.time()
         listen()
     if event == 'Stop':
-        
         stop()
+        
+    if event == '-deAmp-':
+        limiter_gain -= 0.1
+    if event == '-Amp-':
+        limiter_gain +=0.1
+        
+    if event == '-DelimiterTreshold-':
+        limiter_threshold_value -= 0.1
+    if event == '-DelimiterTreshold-':
+        limiter_threshold_value +=0.1
         
 # clsoe the window UI anyway after the loop
 _VARS['window'].close()
