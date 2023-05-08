@@ -1,0 +1,124 @@
+/* Reset default styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Set up a basic layout */
+body {
+  font-family: sans-serif;
+  background-image: url("/images/wall.jpg");
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1{
+    padding-left: 20px;
+    font-weight: bold;
+    font-size: 95px;
+    text-align: left;
+    margin-top: 20%;
+    color: aliceblue;
+}
+h6{
+    padding-left: 20px;
+    font-weight: initial;
+    font-family:Arial, Helvetica, sans-serif;
+    font-size: 35px;
+    text-align: left;
+    color: rgb(159, 168, 175);
+}
+h2{
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.pairbutton{
+    font-family:Arial, Helvetica, sans-serif;
+    margin: 2%;
+    width: 300px;
+    padding: 20px;
+    border-radius: 70px;
+    box-shadow: 10px 10px 20px 1px rgba(0, 0, 0, 0.359);
+    background: linear-gradient(90deg, #c26b00 0%, rgb(255, 157, 97) 50%, rgb(207, 114, 0) 100% );
+}
+
+/* Media queries for tablet screens */
+@media screen and (min-width: 768px) {
+    body {
+      font-size: 18px;
+    }
+    .container {
+      max-width: 768px;
+      padding: 0 2rem;
+    }
+  }
+  
+  /* Media queries for desktop screens */
+  @media screen and (min-width: 1024px) {
+    body {
+      font-size: 20px;
+    }
+    .container {
+      max-width: 1024px;
+      padding: 0 4rem;
+    }
+  }
+
+/* Style headings */
+/* h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 10px;
+}
+
+h1 {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+} */
+
+/* Style buttons */
+/* button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #0062cc;
+} */
+
+/* Style form inputs */
+/* input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+ */
+
+/* this is for the background image*/
+
+
+/* this is for sliders */
+
