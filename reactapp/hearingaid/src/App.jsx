@@ -1,11 +1,13 @@
 import Toppage from "./component/header/toppage";
-import Sliders from "./component/header/sliders";
+import SliderOne from "./component/header/sliders/slidersone";
+import SliderTwo from "./component/header/sliders/sliderstwo";
 
 const App = () => {
   return (
     <div>
       <Toppage />
-      <Sliders />
+      {/* <SliderOne />
+      <SliderTwo /> */}
     </div>
   );
 };

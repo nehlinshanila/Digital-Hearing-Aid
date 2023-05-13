@@ -20,58 +20,77 @@ body {
   padding: 20px;
 }
 
-h1{
-    padding-left: 20px;
-    font-weight: bold;
-    font-size: 95px;
-    text-align: left;
-    margin-top: 20%;
-    color: aliceblue;
+h1 {
+  padding-left: 20px;
+  font-weight: bold;
+  font-size: 95px;
+  text-align: left;
+  margin-top: 20%;
+  color: aliceblue;
 }
-h6{
-    padding-left: 20px;
-    font-weight: initial;
-    font-family:Arial, Helvetica, sans-serif;
-    font-size: 35px;
-    text-align: left;
-    color: rgb(159, 168, 175);
+h6 {
+  padding-left: 20px;
+  font-weight: initial;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 35px;
+  text-align: left;
+  color: rgb(159, 168, 175);
 }
-h2{
-    font-size: 30px;
-    font-weight: bold;
+h2 {
+  font-size: 30px;
+  font-weight: bold;
 }
 
-.pairbutton{
-    font-family:Arial, Helvetica, sans-serif;
-    margin: 2%;
-    width: 300px;
-    padding: 20px;
-    border-radius: 70px;
-    box-shadow: 10px 10px 20px 1px rgba(0, 0, 0, 0.359);
-    background: linear-gradient(90deg, #c26b00 0%, rgb(255, 157, 97) 50%, rgb(207, 114, 0) 100% );
+/* .pairbutton {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 2%;
+  width: 300px;
+  padding: 20px;
+  border-radius: 70px;
+  box-shadow: 10px 10px 20px 1px rgba(0, 0, 0, 0.359);
+  background: linear-gradient(
+    90deg,
+    #c26b00 0%,
+    rgb(255, 157, 97) 50%,
+    rgb(207, 114, 0) 100%
+  );
+} */
+.controlBtn {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 2%;
+  width: 300px;
+  padding: 20px;
+  border-radius: 70px;
+  box-shadow: 10px 10px 20px 1px rgba(0, 0, 0, 0.359);
+  background: linear-gradient(
+    90deg,
+    #c26b00 0%,
+    rgb(255, 157, 97) 50%,
+    rgb(207, 114, 0) 100%
+  );
 }
 
 /* Media queries for tablet screens */
 @media screen and (min-width: 768px) {
-    body {
-      font-size: 18px;
-    }
-    .container {
-      max-width: 768px;
-      padding: 0 2rem;
-    }
+  body {
+    font-size: 18px;
   }
-  
-  /* Media queries for desktop screens */
-  @media screen and (min-width: 1024px) {
-    body {
-      font-size: 20px;
-    }
-    .container {
-      max-width: 1024px;
-      padding: 0 4rem;
-    }
+  .container {
+    max-width: 768px;
+    padding: 0 2rem;
   }
+}
+
+/* Media queries for desktop screens */
+@media screen and (min-width: 1024px) {
+  body {
+    font-size: 20px;
+  }
+  .container {
+    max-width: 1024px;
+    padding: 0 4rem;
+  }
+}
 
 /* Style headings */
 /* h1, h2, h3, h4, h5, h6 {
@@ -119,6 +138,4 @@ input:focus {
 
 /* this is for the background image*/
 
-
 /* this is for sliders */
-
