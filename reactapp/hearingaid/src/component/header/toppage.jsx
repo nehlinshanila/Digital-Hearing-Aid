@@ -1,21 +1,24 @@
 import React, { useState } from "react";
 import SliderOne from "./sliders/slidersone";
 import SliderTwo from "./sliders/sliderstwo";
-
 import "./toppage.css";
 
 const Toppage = () => {
-  const [isControl, setIsControl] = useState(true);
+  const [isControl, setIsControl] = useState(false);
   const [isProfile, setIsProfile] = useState(false);
   const [isSlider, setIsSlider] = useState(false);
 
   return (
     <div>
-      {!isControl == false && <h1>Hearing Aid Guide</h1>}
-      {/* <h1>Hearing Aid Guide</h1> */}
-      {!isControl == false && <h6>Welcome To Our Application</h6>}
-      {/* <h6>Welcome To Our Application</h6> */}
-      {/* <button className='pairbutton'><h2>Pair Device</h2></button> */}
+      {!isControl && (
+        <div>
+          <div className="shadeone"></div>
+          <div className="shadetwo"></div>
+          <img src="../images/Logo.png" alt="Logo" className="logo" />
+          <h1>Hearing Aid Guide</h1>
+          <h6>Welcome To Our Application</h6>
+        </div>
+      )}
 
       <button
         className="controlBtn"
@@ -25,46 +28,43 @@ const Toppage = () => {
           setIsSlider(false);
         }}
       >
-        {isControl === true ? "Control" : "Back"}
+        {isControl ? "Back" : "Control"}
       </button>
 
-      {/* below is the profile button */}
-      <button
-        className="profileBtn"
-        onClick={() => {
-          setIsProfile(!isProfile);
-          setIsControl(false);
-          setIsSlider(false);
-        }}
-      >
-        {isProfile ? "Back" : "Profile"}
-      </button>
-
-      {/* below is the slider button */}
-      <button
-        className="sliderBtn"
-        onClick={() => {
-          setIsSlider(!isSlider);
-          setIsControl(false);
-          setIsProfile(false);
-        }}
-      >
-        {isSlider ? "Back" : "Slider"}
-      </button>
-
-      {/* {isControl === true ? <SliderOne /> : <SliderTwo />} */}
-      {isControl == false && (
+      {isControl && (
         <>
-          Welcome to the options page
+          <button
+            className="profileBtn"
+            onClick={() => {
+              setIsProfile(!isProfile);
+              setIsSlider(false);
+            }}
+          >
+            {isProfile ? "Back" : "Profile"}
+          </button>
+
+          <button
+            className="sliderBtn"
+            onClick={() => {
+              setIsSlider(!isSlider);
+              setIsProfile(false);
+            }}
+          >
+            {isSlider ? "Back" : "Slider"}
+          </button>
         </>
+      )}
+
+      {isControl === true && isProfile === false && isSlider === false && (
+        <h2>Welcome to the options page</h2>
       )}
 
       {isProfile && <h2>Profile Content</h2>}
 
-      {isSlider == true && (
+      {isSlider && (
         <>
-        <SliderOne/>
-        <SliderTwo/>
+          <SliderOne />
+          <SliderTwo />
         </>
       )}
     </div>

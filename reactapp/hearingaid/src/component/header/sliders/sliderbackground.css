@@ -1,0 +1,12 @@
+.sliderbackground {
+  top: 100px;
+  height: 80%;
+  width: 90%;
+  margin-top: 1%;
+  margin-left: 5%;
+  background-image: linear-gradient(to right,  #485c6f8c, #b8c1c889 );
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  position: absolute;
+  
+}
