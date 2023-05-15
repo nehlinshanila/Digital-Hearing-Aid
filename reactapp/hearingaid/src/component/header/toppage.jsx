@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import SliderOne from "./sliders/slidersone";
 import SliderTwo from "./sliders/sliderstwo";
+
 import "./toppage.css";
+import "./sliders/sliderbackground.css";
 
 const Toppage = () => {
   const [isControl, setIsControl] = useState(false);
@@ -28,7 +30,7 @@ const Toppage = () => {
           setIsSlider(false);
         }}
       >
-        {isControl ? "Back" : "Control"}
+        {isControl ? "Home" : "Control"}
       </button>
 
       {isControl && (
