@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import "./slidersone.css";
 import "./sliderbackground.css";
 
-import { Link } from "react-router-dom";
-
 export default function SliderOne() {
   const [value, setValue] = useState(1);
   useEffect(() => {
@@ -11,7 +9,7 @@ export default function SliderOne() {
     if (bubleElement) {
       bubleElement.style.left = `${Number(value / 4)}px`;
     }
-  }, []);
+  }, [value]);
   return (
     <div className="sliderbackground">
       <div className="shadedarea">
