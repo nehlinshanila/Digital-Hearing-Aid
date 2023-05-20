@@ -1,14 +1,23 @@
 import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
-import CustomButtonStyle from './buttons_styles';
+import {Button, Text, View, TouchableOpacity} from 'react-native';
+import ControlButtonStyle from './buttons_styles';
 
-const CustomButton = ({ title, onPress }) => {
-    const styles=CustomButtonStyle
+const ControlButton = ({title, onPress, pressValue}) => {
+  const styles = ControlButtonStyle;
+  // const newButtonTitle = "New Button Title"; // Update the button title here
+
   return (
-    <TouchableOpacity style={styles.button} onPress={onPress}>
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.container}>
+      <Button title={pressValue == true ? 'control' : 'back'} onPress={onPress} style={styles.controlButton}/>
       <Text style={styles.buttonText}>{title}</Text>
+    </View>
     </TouchableOpacity>
+    
+    
   );
 };
 
-export default CustomButton;
+export default ControlButton;
+{/* <Button title="Amplitude" onPress={onPress} style={styles.amplitudeButton}/>
+      <Button title="Profile" onPress={onPress} style={styles.profileButton}/> */}

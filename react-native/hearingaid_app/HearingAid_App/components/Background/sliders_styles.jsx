@@ -1,28 +1,35 @@
 import {StyleSheet} from 'react-native';
 
-const sliderstyles = StyleSheet.create({
+const Sliderstyles = StyleSheet.create({
   container: {
-    backgroundColor: 'red',
+    display: 'flex',
+    // backgroundColor: 'red',
+    justifyContent: 'center',
+    alignItems: 'center',
     height: 'auto',
-    width: '100',
-    justifyContent: 'center',
-    alignItems: 'center',
+    position: 'absolute',
+    top: 110,
   },
+
   slider: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    alignItems: 'stretch',
-    justifyContent: 'center',
+    height: 60,
+    width: 300,
+    top:180,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+    transform: [{ rotate: '-90deg' }],
+    position: 'relative',
   },
-  slider: {
-    marginHorizontal: 16,
-  },
+
   valueText: {
     textAlign: 'center',
     marginTop: 8,
-    fontSize: 16,
+    fontSize: 45,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#263D54',
   },
 });
 
-export default sliderstyles;
+export default Sliderstyles;
