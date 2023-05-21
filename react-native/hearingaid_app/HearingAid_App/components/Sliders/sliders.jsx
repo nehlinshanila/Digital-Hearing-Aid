@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import { View, Text } from 'react-native';
 import Sliderstyles from './sliders_styles';
-// import Slider from 'react-native-slider';
-import Slider from '@react-native-community/slider';
+import Slider from 'react-native-slider';
+// import Slider from '@react-native-community/slider';
 
 const SliderComponent = () => {
   const [value, setValue] = useState(1);
@@ -26,8 +26,8 @@ const SliderComponent = () => {
         maximumValue={100}
         step={1}
         style={styles.slider}
-        // vertical={true}
-        // thumbStyle={styles.thumb}
+        vertical={true}
+        thumbStyle={styles.thumb}
         // orientation="vertical"
         // minimumTrackTintColor="#000"
         // maximumTrackTintColor="#ccc"

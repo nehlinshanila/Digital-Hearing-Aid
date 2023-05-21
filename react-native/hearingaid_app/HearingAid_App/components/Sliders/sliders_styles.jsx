@@ -35,7 +35,7 @@ const Sliderstyles = StyleSheet.create({
     height: 35,
     width: 35,
     borderRadius: 50,
-    color: '#FFFFFF',
+    color: '#263D54',
     
   }
 });

@@ -11,24 +11,28 @@ const MaincontainerStyles = StyleSheet.create({
     top: 300,
   },
   title: {
-    color: '#17212a',
-    fontSize: 60,
+    position: 'relative',
+    color: '#485781',
+    fontSize: 80,
     fontWeight: 'bold',
     // fontFamily: 'Poppins, sans-serif',
   },
   subtitle: {
-    color: '#001728af',
+    color: '#73767d',
     fontSize: 25,
     fontWeight: 'bold',
+    // fontFamily: 'Poppins, sans-serif',
+
   },
   logo: {
-    top: -280,
-    left: -10,
+    top: -150,
+    left: 30,
     position: 'absolute',
-    width: 300,
-    height: 300,
+    width: 200,
+    height: 200,
     resizeMode: 'contain',
     borderColor: 'white', // HOWWWWWWWWWWWWWWWWWWW  then give logo
+    opacity: 0.5,
     // elevation: 10,
     // shadowColor: '#000000',
   },
@@ -40,6 +44,7 @@ const MaincontainerStyles = StyleSheet.create({
     height: 230,
     backgroundColor: 'grey',
     borderRadius: 50,
+    opacity: 1,
     
   },
   block: {
@@ -54,7 +59,7 @@ const MaincontainerStyles = StyleSheet.create({
   },
   elevation: {
     // zIndex:-1,
-    elevation: 30,
+    elevation: 20,
     shadowColor: 'black',
   },
 });
