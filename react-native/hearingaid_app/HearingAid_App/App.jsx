@@ -4,14 +4,10 @@ import Maincontainer from './components/Maincontainer/maincontainer';
 import ControlButton from './components/Buttons/buttons';
 import SliderComponent from './components/Sliders/sliders';
 import LinearGradient from 'react-native-linear-gradient';
+import Test_Slider from './components/Sliders/test_slider';
 
 const App = () => {
-  const [value, setValue] = useState(0);
   const [isPressed, setisPressed] = useState(false);
-
-  const handleSliderChange = sliderValue => {
-    setValue(sliderValue);
-  };
 
   const handlePressed = () => {
     setisPressed(!isPressed);
@@ -27,7 +23,8 @@ const App = () => {
 {/* 
         <Maincontainer />
         <ControlButton onPress={handlePressed} pressValue={isPressed} /> */}
-        <SliderComponent value={value} onValueChange={handleSliderChange} />
+        <SliderComponent />
+        {/* <Test_Slider /> */}
       </View>
     </LinearGradient>
   );
