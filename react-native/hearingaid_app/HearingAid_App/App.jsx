@@ -42,8 +42,9 @@ const App = () => {
         )}
 
         <ControlButton
-          title={isComponentVisible ? 'Amplitude' : 'Home'}
+          title={isComponentVisible ? 'Control' : 'Home'}
           onPress={toggleComponentVisibility}
+          isInControl={isComponentVisible}
         />
 
         {/* <MyComponent/> */}

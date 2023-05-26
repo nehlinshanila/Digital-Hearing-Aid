@@ -1,55 +1,35 @@
 import {StyleSheet} from 'react-native';
 
 const ControlButtonStyle = StyleSheet.create({
-  container: {
+  controlButon: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginBottom: 20,
     position: 'relative',
-    top: 200,
+    top: 210,
     right: 100,
     width: 100,
+    backgroundColor: '#b09e6d',
+    borderRadius: 15,
   },
-  controlButton: {
-    display: 'flex',
-    alignItems: 'center',
-    backgroundColor: '#2196F3',
-    borderRadius: 10,
-    paddingBottom:10,
-    height: 30,
-    width: 80,
-    marginTop: 20,
-    justifyContent: 'center',
+  controlButtonText: {
+    backgroundColor: '#b09e6d',
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
+    padding: 10,
   },
-  // button: {
-  //   display: 'flex',
-  //   backgroundColor: 'red',
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 10,
-  //   borderRadius: 8,
-  //   alignItems: 'center',
-  // },
-  // controlButton: {
-  //   backgroundColor: 'red',
-  //   marginLeft: '20%',
-  //   backgroundColor: '#2196F3',
-  //   borderRadius: 8,
-  // },
-
-  // amplitudeButton: {
-  //   backgroundColor: 'green', // Set the color for Amplitude button
-  // },
-  // profileButton: {
-  //   backgroundColor: 'blue', // Set the color for Profile button
-  // },
-  // buttonText: {
-  //   color: 'white',
-  //   fontSize: 16,
-  //   fontWeight: 'bold',
-  // },
+  homeButtonText: {
+    position: 'relative',
+    height: '7%',
+    top: -320,
+    left: -130, 
+    backgroundColor: '#b09e6d',
+    fontSize: 16,
+    fontWeight: 'bold',
+    padding: 3,
+    borderRadius: 10,
+  },
 });
 
 export default ControlButtonStyle;

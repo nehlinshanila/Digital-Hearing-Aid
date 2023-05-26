@@ -9,6 +9,7 @@ const Sliderstyles = StyleSheet.create({
     height: 'auto',
     position: 'absolute',
     top: 110,
+    
   },
 
   slider: {
@@ -18,7 +19,7 @@ const Sliderstyles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 2,
     borderColor: '#FFFFFF',
-    transform: [{ rotate: '-90deg' }],
+    // transform: [{ rotate: '-90deg' }],
     position: 'relative',
     // backgroundColor: 'red'
   },
@@ -30,12 +31,14 @@ const Sliderstyles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     color: '#263D54',
+    
   },
   thumb: {
     height: 35,
     width: 35,
     borderRadius: 50,
     color: '#263D54',
+    
     
   }
 });

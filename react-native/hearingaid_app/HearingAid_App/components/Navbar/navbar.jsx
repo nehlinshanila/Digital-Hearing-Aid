@@ -12,15 +12,15 @@ const Navbar = () => {
   };
 
   return (
-    <View style={styles.navbar}>
+    <View style={NavbarStyle.navbar}>
       <TouchableWithoutFeedback onPress={handlePress}>
         <Text style={styles.navbarButton}>Menu</Text>
       </TouchableWithoutFeedback>
       {showOptions && (
-        <View style={styles.optionsContainer}>
-          <Text style={styles.optionText}>Server</Text>
-          <Text style={styles.optionText}>Profile</Text>
-          <Text style={styles.optionText}>About Us</Text>
+        <View style={NavbarStyle.optionsContainer}>
+          <Text style={NavbarStyle.optionText}>Server</Text>
+          <Text style={NavbarStyle.optionText}>Profile</Text>
+          <Text style={NavbarStyle.optionText}>About Us</Text>
         </View>
       )}
     </View>
