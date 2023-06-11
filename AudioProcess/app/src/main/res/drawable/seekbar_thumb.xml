@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size android:width="15dp" android:height="40dp" /> <!-- Set the desired width and height -->
+    <solid android:color="#A11BE8" /> <!-- Set the thumb color -->
+    <corners android:radius="20dp" /> <!-- Set the desired corner radius (half of the width/height) -->
+</shape>
