@@ -1,4 +1,4 @@
-## Digital Hearing Aid :ear_with_hearing_aid:
+<h1 align="center">Digital Hearing Aid :ear_with_hearing_aid:</h1>
 
   Our project is an app for those people that are both autistic and have hearing aid disability. The app takes sound input and will then process and amplify the sound according to the user’s need. Every hearing loss is different which is why the doctor will specify the highest and lowest decibel of sound tolerated by that specific patient and it will be set inside the app accordingly. 
   
