@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private short[] audioBuffer;
     private final Object lock = new Object();
     private double ampli;
+    private double time_spent_in_loud_env;
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -79,24 +80,33 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 // Adjust the volume based on the seek bar progress
-                double volume;
-                if(ampli > 75.0){
-                    volume = 0.5;
-                }else if(ampli > 100){
-                    volume = 0.3;
-                }else if(ampli > 150){
-                    volume = 0.1;
-                }else{
-                    volume  = (double) progress / seekBar.getMax();
+                double volume  = (double) progress / seekBar.getMax();
+//                double volume  = 0.7;
+                if (ampli > 30){
+                    volume = 0.6;
+                    if(ampli < 100){
+                        volume = 0.5;
+                    }
+                    else if(ampli > 100 && ampli < 150){
+                        volume = 0.3;
+                    }
+                    else if(ampli > 150){
+                        volume = 0.1;
+                    }
                 }
+//                else{
+//                    volume  = (double) progress / seekBar.getMax();
+//                }
 
                 if(audioTrack != null && audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING) {
                     audioTrack.setVolume((float) volume);
                 }
-                tvAmplification.setText("Amplification: " + String.format("%.2f", volume));
 
-                int newProgress = seekBar.getProgress();
-                tvVolume.setText("Volume: " + newProgress);
+//                this part is only for the debugging
+//                tvAmplification.setText("Amplification: " + String.format("%.2f", volume));
+//
+//                int newProgress = seekBar.getProgress();
+//                tvVolume.setText("Volume: " + newProgress);
             }
 
             @Override
@@ -185,18 +195,24 @@ public class MainActivity extends AppCompatActivity {
         double sum = 0.0;
         for (short sample : samples) {
 //            sum += Math.abs(sample);
-            sum += (sample*sample);
+            sum += (sample * sample);
         }
-        double averageAmplitude = (double)Math.sqrt( sum / samples.length);
 
+        double averageAmplitude = (double) Math.sqrt( sum / samples.length );
         double reference = 32767.0; // Maximum amplitude for 16-bit signed samples
+
+
         double amplitudeRatio = averageAmplitude / reference;
+
         double amplitude_dB = 250.0 * amplitudeRatio;
-        double amplitude = Math.abs(amplitude_dB);
+
+//        double amplitude = Math.abs(amplitude_dB);
+
+        double amplitude = Math.max(0, amplitude_dB);
         ampli = amplitude;
+
+
         return amplitude;
-
-
 
     }
 
@@ -222,6 +238,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateAmplitudeText(final double amplitude) {
         Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(() -> tvAmplitude.setText("Amplitude: " + String.format("%.2f", amplitude) + " dB"));
+        if (amplitude > 0.00){
+            handler.post(() -> tvAmplitude.setText("Amplitude: " + String.format("%.2f", amplitude) + " dB"));
+        }
     }
 }

@@ -40,12 +40,12 @@
         android:text="Amplitude: "
         android:textSize="18sp" />
 
+
     <TextView
         android:id="@+id/tvVolume"
         android:layout_width="149dp"
         android:layout_height="37dp"
         android:layout_below="@+id/volumeSeekBar"
-        android:text="Volume: 0.0"
         android:layout_marginTop="180dp"
         android:textSize="18sp" />
 
@@ -54,7 +54,6 @@
         android:layout_width="219dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvVolume"
-        android:text="amplification: 0.0"
         android:textSize="18sp" />
 
     <Button

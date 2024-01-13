@@ -6,15 +6,15 @@ from scipy import signal
 
 # all the variables
 # how much the audio data needs to gain
-limiter_gain = 1.0 # the gain value
-limiter_threshold_value = 0.9 # the threshold value
+limiter_gain = 1.0  # the gain value
+limiter_threshold_value = 0.9   # the threshold value
 # how much the sounds need amplifying
-amplification_factor = 8 #main factor
-amplification_factor_lower_bound = 2 #lower bound
-amplification_factor_upper_bound = 4 #Upper bound
-# the the frequency that needs to be cutoff
+amplification_factor = 8    # main factor
+amplification_factor_lower_bound = 2    # lower bound
+amplification_factor_upper_bound = 4    # Upper bound
+# the frequency that needs to be cutoff
 cutoff_frequency = 3200
-# loudness check for comfortable hearinng
+# loudness check for comfortable hearing
 loud_check_threshold = 65
 
 
@@ -22,7 +22,8 @@ CHUNK = 3200  # Samples:3200, 2048, 1024,  512, 256, 128
 RATE = 44100  # Equivalent to Human Hearing at 40 kHz (44100 or 48000)
 INTERVAL = 1  # Sampling Interval in Seconds. ie, Interval to listen
 CHANNELS = 1  # audio input devices
-FORMAT = pyaudio.paInt16 # data formatting type
+FORMAT = pyaudio.paInt16    # data formatting type
+
 
 def is_loud(data):
     
@@ -35,11 +36,12 @@ def is_loud(data):
             
     return factor
 
+
 def low_pass_filter_data(in_data, frame_count):
     
     samples = list(struct.unpack(f"{frame_count}h", in_data))
     
-     # Apply a low-pass filter to the incoming audio data
+    # Apply a low-pass filter to the incoming audio data
     normalized_cutoff_frequency = 2 * cutoff_frequency / RATE
     b, a = signal.butter(5, normalized_cutoff_frequency, "low")
     
@@ -48,6 +50,7 @@ def low_pass_filter_data(in_data, frame_count):
     filtered_samples = np.array(filtered_samples)
     
     return filtered_samples
+
 
 def amplify_data(filtered_samples, limiter_threshold):
     # Apply a limiter to the audio data.
@@ -59,12 +62,13 @@ def amplify_data(filtered_samples, limiter_threshold):
 
     return amplified_data.astype(np.int64)
 
+
 def callback(in_data, frame_count, time_info, status):
     # converts the incoming sound data into a int116 numpy array
     data = np.frombuffer(in_data, dtype=np.int16)
     
-    #to check the loudness of the audio data
-    amplification_factor = is_loud(data)
+    # to check the loudness of the audio data
+    # amplification_factor = is_loud(data)
          
     filtered_samples = low_pass_filter_data(in_data, frame_count)
 
@@ -72,8 +76,9 @@ def callback(in_data, frame_count, time_info, status):
     limiter_threshold = limiter_threshold_value * 32767
     
     amplified_data = amplify_data(filtered_samples, limiter_threshold)
+
     # Convert the amplified data back to bytes
-    return (struct.pack(f"<{frame_count}h", *amplified_data), pyaudio.paContinue)
+    return struct.pack(f"<{frame_count}h", *amplified_data), pyaudio.paContinue
 
 
 def main():
@@ -103,6 +108,7 @@ def main():
 
     # Close the PyAudio object.
     p.terminate()
+
 
 if __name__ == "__main__":
     main()
